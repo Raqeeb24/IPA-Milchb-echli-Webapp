@@ -34,3 +34,4 @@ C:\Users\kanis\Documents\IPA Milchbueechli Webapp\IPA-Milchbüechli-Webapp\API\o
 C:\Users\kanis\Documents\IPA Milchbueechli Webapp\IPA-Milchbüechli-Webapp\API\obj\Debug\net8.0\API.pdb
 C:\Users\kanis\Documents\IPA Milchbueechli Webapp\IPA-Milchbüechli-Webapp\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\Users\kanis\Documents\IPA Milchbueechli Webapp\IPA-Milchbüechli-Webapp\API\obj\Debug\net8.0\ref\API.dll
+C:\Users\kanis\Documents\IPA Milchbueechli Webapp\IPA-Milchbüechli-Webapp\API\obj\Debug\net8.0\API.sourcelink.json
