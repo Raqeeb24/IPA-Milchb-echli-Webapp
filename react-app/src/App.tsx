@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import ApiRequest from './api.requests'
+import { Container } from '@mui/material'
+import LoginView from './components/LoginView'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <h1>Milchbüechli Webapp</h1>
-      <button onClick={() => ApiRequest.getTestingData()}>Daten abrufen</button>
+      <Container maxWidth="sm">
+        <LoginView />
+        <br />
+        <button onClick={() => ApiRequest.getTestingData()}>Daten abrufen</button>
+      </Container>
     </>
   )
 }
