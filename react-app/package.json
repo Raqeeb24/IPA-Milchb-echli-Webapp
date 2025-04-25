@@ -14,6 +14,8 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
+    "@types/crypto-js": "^4.2.2",
+    "@types/js-cookie": "^3.0.6",
     "axios": "^1.8.4",
     "i": "^0.3.7",
     "Npm": "^3.0.0",

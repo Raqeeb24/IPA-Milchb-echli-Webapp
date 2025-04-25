@@ -4,21 +4,21 @@
             "id": 1,
             "name": "Kunde 1",
             "address": "Solothurnerstrasse 10",
-            "zip": "4500",
+            "zip": 4500,
             "place": "Solothurn"
         },
         {
             "id": 2,
             "name": "Kunde 2",
             "address": "Solothurnerstrasse 115",
-            "zip": "4528",
+            "zip": 4528,
             "place": "Zuchwil"
         },
         {
             "id": 3,
             "name": "Kunde 3",
             "address": "Aarauerstrasse 104",
-            "zip": "5001",
+            "zip": 5001,
             "place": "Aarau"
         }
     ]
