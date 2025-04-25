@@ -6,7 +6,7 @@ import LoginView from './components/LoginView'
 function App() {
   return (
     <>
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
         <LoginView />
         <br />
         <button onClick={() => ApiRequest.getTestingData()}>Daten abrufen</button>

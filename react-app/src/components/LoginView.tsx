@@ -1,29 +1,41 @@
-import { Button, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Button, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, styled, Stack } from "@mui/material";
 import React from "react";
-
 import customers from "../assets/customers.json";
+import { PersonAddAlt1 } from "@mui/icons-material";
+import LoginIcon from '@mui/icons-material/Login';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { CustomizedIconButton } from "./CustomizedIconButton";
 
 const LoginView: React.FC = () => {
     const [customer, setCustomer] = React.useState();
 
+    const StyledTableCell = styled(TableCell)({
+        color: "white",
+        backgroundColor: "Black"
+    });
+
     return (
         <Box sx={{ display: "grid", gap: 5 }}>
             <Typography variant="h3" textAlign="center" gutterBottom>Milchbüechli Webapp</Typography>
-            <Box sx={{ display: "grid", gridAutoColumns: "1fr", gap: 2 }}>
-                <Button variant="outlined" size="medium" sx={{ gridRow: "1", gridColumn: "span 1" }}>Neu</Button>
-                <Button variant="outlined" size="medium" sx={{ gridRow: "1", gridColumn: "span 2" }}>Bearbeiten</Button>
-                <TextField variant="outlined" value={customer} sx={{ gridRow: "1", gridColumn: "span 4" }} />
-                <Button variant="outlined" size="medium" sx={{ gridRow: "1", gridColumn: "span 2" }} onClick={() => console.log("Kunde auswählen")}>Auswählen</Button>
-            </Box>
+            <Stack direction="row" justifyContent="end">
+                <CustomizedIconButton customColorOnHover="#38B000" onClick={() => window.alert("add customer")}>
+                    <PersonAddAlt1
+                        fontSize="large"
+                    />
+                </CustomizedIconButton>
+
+            </Stack>
 
             <Paper sx={{ width: "100%" }}>
                 <TableContainer>
                     <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
+                        <TableHead className="TableHead">
                             <TableRow>
-                                <TableCell>Kundenname</TableCell>
-                                <TableCell>Adresse</TableCell>
-                                <TableCell>Ort</TableCell>
+                                <StyledTableCell>Kundenname</StyledTableCell>
+                                <StyledTableCell>Adresse</StyledTableCell>
+                                <StyledTableCell>Ort</StyledTableCell>
+                                <StyledTableCell sx={{textAlign: "end"}}>Aktion</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -32,6 +44,25 @@ const LoginView: React.FC = () => {
                                     <TableCell>{c.name}</TableCell>
                                     <TableCell>{c.address}</TableCell>
                                     <TableCell>{c.zip} {c.place}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" justifyContent="end">
+                                            <CustomizedIconButton customColorOnHover="#0D6EFD" onClick={() => window.alert("add customer")} sx={{gridRow: 1}}>
+                                            <LoginIcon
+                                                fontSize="medium"
+                                            />
+                                        </CustomizedIconButton>
+                                        <CustomizedIconButton customColorOnHover="#FFA500" onClick={() => window.alert("add customer")} sx={{gridRow: 1}}>
+                                            <EditIcon
+                                                fontSize="medium"
+                                            />
+                                        </CustomizedIconButton>
+                                        <CustomizedIconButton customColorOnHover="#DC3545" onClick={() => window.alert("add customer")} sx={{gridRow: 1}}>
+                                            <DeleteIcon
+                                                fontSize="medium"
+                                            />
+                                        </CustomizedIconButton>
+                                        </Stack>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
