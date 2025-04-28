@@ -8,7 +8,6 @@ function App() {
   return (
     <>
       <Container maxWidth="lg">
-
         <Routes>
           <Route path="/" element={<LoginView />} />
           <Route path="/Haupt-View" element={<div>Haupt-view</div>} />

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Models;
+using API.Dtos;
 
 namespace API.Controllers
 {
@@ -45,18 +46,23 @@ namespace API.Controllers
         // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(int id, Customer customer)
+        public async Task<IActionResult> PutCustomer(int id, [FromBody] CustomerDto customerDto)
         {
-            if (id != customer.CustomerId)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+            customer.CustomerName = customerDto.CustomerName;
+            customer.Address = customerDto.Address;
+            customer.Zip = customerDto.Zip;
+            customer.Place = customerDto.Place;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -76,12 +82,20 @@ namespace API.Controllers
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> PostCustomer([FromBody] CustomerDto customerDto)
         {
+            var customer = new Customer()
+            {
+                CustomerName = customerDto.CustomerName,
+                Address = customerDto.Address,
+                Zip = customerDto.Zip,
+                Place = customerDto.Place
+            };
+
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
+            return Ok();
         }
 
         // DELETE: api/Customers/5
