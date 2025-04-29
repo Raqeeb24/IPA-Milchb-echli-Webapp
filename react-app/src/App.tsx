@@ -1,20 +1,28 @@
-import { useState } from 'react'
 import ApiRequest from './api.requests'
-import { Container } from '@mui/material'
 import LoginView from './components/LoginView'
 import { Route, Routes } from 'react-router-dom'
+import { CustomerContext } from './components/context/CustomerContext'
+import { emptyCustomer } from './components/interfaces/Customer'
+import HomeView from './components/HomeView'
+import { LoginLayout } from './LoginLayout'
+import { AppLayout } from './AppLayout'
 
 function App() {
   return (
     <>
-      <Container maxWidth="lg">
+      <CustomerContext.Provider value={{ customer: emptyCustomer, setCustomer: () => { } }}>
         <Routes>
-          <Route path="/" element={<LoginView />} />
-          <Route path="/Haupt-View" element={<div>Haupt-view</div>} />
+          <Route element={<LoginLayout />}>
+            <Route path="/" element={<LoginView />} />
+          </Route>
+          <Route element={<AppLayout />}>
+            <Route path="/HomeView" element={<HomeView />} />
+            <Route path="/ReportView" element={<div>ReportView</div>} />
+          </Route>
         </Routes>
         <br />
         <button onClick={() => ApiRequest.getTestingData()}>Daten abrufen</button>
-      </Container>
+      </CustomerContext.Provider>
     </>
   )
 }

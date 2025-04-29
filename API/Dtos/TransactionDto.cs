@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.Models
+namespace API.Dtos
 {
-    public class Transaction
+    public class TransactionDto
     {
-        [Key]
-        public int TransactionId { get; set; }
         [Required]
+        [Range(1000, 9999)]
         public int AccountId { get; set; }
         [Required]
         public string Description { get; set; }
@@ -17,8 +16,5 @@ namespace API.Models
         public DateTime Date { get; set; }
         [Required]
         public int CustomerId { get; set; }
-
-        public Account Account { get; set; }
-        public Customer Customer { get; set; }
     }
 }

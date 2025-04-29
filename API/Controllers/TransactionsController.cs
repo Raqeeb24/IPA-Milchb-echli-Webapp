@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Models;
+using API.Dtos;
 
 namespace API.Controllers
 {
@@ -76,12 +77,26 @@ namespace API.Controllers
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
+        public async Task<ActionResult> PostTransaction([FromBody] TransactionDto transactionDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            Console.WriteLine("DTO" + transactionDto.CustomerId + " " + transactionDto.Description);
+            var transaction = new Transaction()
+            {
+                AccountId = transactionDto.AccountId,
+                Description = transactionDto.Description,
+                Amount = transactionDto.Amount,
+                Date = transactionDto.Date,
+                CustomerId = transactionDto.CustomerId
+            };
+
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTransaction", new { id = transaction.TransactionId }, transaction);
+            return Ok();
         }
 
         // DELETE: api/Transactions/5

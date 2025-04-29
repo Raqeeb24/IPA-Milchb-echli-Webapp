@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Customer } from "./components/interfaces/Customer";
 import { enqueueSnackbar } from "notistack";
+import { Transaction, TransactionDto } from "./components/interfaces/Transaction";
 
 const instance = axios.create({
     baseURL: "https://localhost:7160/"
@@ -49,6 +50,68 @@ const ApiRequest = {
         } catch (error) {
             console.error("Error DELETE customer:", error);
             enqueueSnackbar(`Kunde löschen fehlgeschlagen: ${error}`, {variant: "error"});
+        }
+    },
+    getTransactions: async () => {
+        try {
+            const response = await instance.get("api/Transactions");
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET transactions:", error);
+            enqueueSnackbar("Failed to fetch data");
+        }
+    },
+    getTransactionId: async () => {
+        try {
+            const response = await instance.get("api/Transactions/TransactionId");
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET transactions:", error);
+            enqueueSnackbar("Failed to fetch data");
+        }
+    },
+    postTransaction: async (transaction: TransactionDto = {accountId:0, amount:10.00, customerId:1, date:"2022-05-05", description:"dsf"}) => {
+        try {
+            const response = await instance.post("api/Transactions", transaction);
+            console.log("Response:", response.data);
+            return response.status;
+        } catch (error) {
+            console.error("Error POST transaction:", error);
+            enqueueSnackbar(`Buchung hinzufügen fehlgeschlagen: ${error}`, {variant: "error"});
+        }
+    },
+    editTransaction: async (transaction: TransactionDto) => {
+        try {
+            if(transaction.transactionId)
+            {
+                const response = await instance.put(`api/Customers/${transaction.customerId}`, transaction);
+            console.log("Response:", response.data);
+            return response.status;
+            }
+            return 404;
+        } catch (error) {
+            console.error("Error PUT transaction:", error);
+            enqueueSnackbar(`Buchung editieren fehlgeschlagen: ${error}`, {variant: "error"});
+        }
+    },
+    deleteTransaction: async (transactionId: number) => {
+        try {
+            await instance.delete(`api/Transactions/${transactionId}`);
+        } catch (error) {
+            console.error("Error DELETE transaction:", error);
+            enqueueSnackbar(`Buchung löschen fehlgeschlagen: ${error}`, {variant: "error"});
+        }
+    },
+    getAccounts: async () => {
+        try {
+            const response = await instance.get("api/Accounts");
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET accounts:", error);
+            enqueueSnackbar("Failed to fetch data");
         }
     },
 }

@@ -355,22 +355,12 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "transaction",
-        "Type": "API.Models.Transaction",
+        "Name": "transactionDto",
+        "Type": "API.Dtos.TransactionDto",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Models.Transaction",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "API.Controllers.TransactionsController",

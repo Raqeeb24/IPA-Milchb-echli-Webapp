@@ -57,6 +57,22 @@ namespace API.Data
             foreach (var a in accounts) { context.Accounts.Add(a); }
 
             context.SaveChanges();
+
+            if (!context.Transactions.Any())
+            {
+                var transactions = new Transaction[]
+                {
+                     new Transaction {AccountId=3000, Description="blabla", Amount=12.50m,Date=DateTime.Now, CustomerId=1},
+                     new Transaction {AccountId=4000, Description="blablablablablablablablablabla", Amount=1099m, Date=DateTime.Now, CustomerId=1},
+                     new Transaction {AccountId=6000, Description="blablablabla", Amount=5000.50m, Date=DateTime.Now, CustomerId=1 },
+                };
+
+                foreach (var t in transactions)
+                {
+                    context.Transactions.Add(t);
+                }
+                context.SaveChanges();
+            }
         }
     }
 }

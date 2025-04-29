@@ -1,23 +1,20 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled, Stack, Modal, TextField, Button, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled, Stack, Modal, TextField, Button, Dialog, DialogTitle, DialogContent, IconButton } from "@mui/material";
 import React from "react";
 import { PersonAddAlt1 } from "@mui/icons-material";
 import LoginIcon from '@mui/icons-material/Login';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CustomizedIconButton } from "./CustomizedIconButton";
-import { Customer } from "./interfaces/Customer";
+import { Customer, emptyCustomer } from "./interfaces/Customer";
 import { useNavigate } from "react-router-dom";
 import ApiRequest from "../api.requests";
 import { enqueueSnackbar } from "notistack";
+import { SECRET_KEY } from "../config";
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
+import { DeleteIconButton, EditIconButton, LoginIconButton, PersonAddIconButton } from "./IconButtons";
+import { StyledTableCell } from "./StyledTable";
 
 const LoginView: React.FC = () => {
-    const emptyCustomer: Customer = {
-        customerId: 0,
-        customerName: "",
-        address: "",
-        zip: 0,
-        place: ""
-    }
 
     type ActionType = "selectCustomer" | "addCustomer" | "editCustomer" | "deleteCustomer" | "";
 
@@ -41,12 +38,6 @@ const LoginView: React.FC = () => {
         fetchData();
     }, []);
 
-
-    const StyledTableCell = styled(TableCell)({
-        color: "white",
-        backgroundColor: "Black"
-    });
-
     const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("log:", customer);
@@ -66,11 +57,11 @@ const LoginView: React.FC = () => {
             await fetchData();
             setLoading(false);
             setOpen(false);
-        } else{
+        } else {
             console.log("no response: ", response)
         }
-
     }
+
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCustomer((prevCustomer) => ({
             ...prevCustomer,
@@ -85,7 +76,10 @@ const LoginView: React.FC = () => {
 
         switch (action) {
             case "selectCustomer":
-                navigate("/Home-View");
+                const encryptedCustomer = CryptoJS.AES.encrypt(JSON.stringify(selectedCustomer), SECRET_KEY).toString();
+                Cookies.set("customer", encryptedCustomer, { expires: 0.2 });
+                setCustomer(emptyCustomer);
+                navigate("/HomeView");
             case "addCustomer":
                 setCustomer(emptyCustomer);
                 setOpen(true);
@@ -111,11 +105,7 @@ const LoginView: React.FC = () => {
         <Box sx={{ display: "grid", gap: 5, marginTop: "5vh" }}>
             <Typography variant="h3" textAlign="center" gutterBottom>Milchbüechli Webapp</Typography>
             <Stack direction="row" justifyContent="end">
-                <CustomizedIconButton customColorOnHover="#38B000" onClick={() => handleIconClick("addCustomer", emptyCustomer)}>
-                    <PersonAddAlt1
-                        fontSize="large"
-                    />
-                </CustomizedIconButton>
+                <PersonAddIconButton onClick={() => handleIconClick("addCustomer", emptyCustomer)} />
             </Stack>
             <Dialog
                 open={open}
@@ -198,33 +188,18 @@ const LoginView: React.FC = () => {
                                             <TableCell>{c.zip} {c.place}</TableCell>
                                             <TableCell>
                                                 <Stack direction="row" justifyContent="end">
-                                                    <CustomizedIconButton
-                                                        customColorOnHover="#0D6EFD"
+                                                    <LoginIconButton
                                                         sx={{ gridRow: 1 }}
                                                         onClick={() => handleIconClick("selectCustomer", c)}
-                                                    >
-                                                        <LoginIcon
-                                                            fontSize="medium"
-                                                        />
-                                                    </CustomizedIconButton>
-                                                    <CustomizedIconButton
-                                                        customColorOnHover="#FFA500"
+                                                    />
+                                                    <EditIconButton
                                                         sx={{ gridRow: 1 }}
                                                         onClick={() => handleIconClick("editCustomer", c)}
-                                                    >
-                                                        <EditIcon
-                                                            fontSize="medium"
-                                                        />
-                                                    </CustomizedIconButton>
-                                                    <CustomizedIconButton
-                                                        customColorOnHover="#DC3545"
+                                                    />
+                                                    <DeleteIconButton
                                                         sx={{ gridRow: 1 }}
                                                         onClick={() => handleIconClick("deleteCustomer", c)}
-                                                    >
-                                                        <DeleteIcon
-                                                            fontSize="medium"
-                                                        />
-                                                    </CustomizedIconButton>
+                                                    />
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>

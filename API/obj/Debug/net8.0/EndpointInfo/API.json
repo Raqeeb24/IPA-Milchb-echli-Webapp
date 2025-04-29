@@ -605,41 +605,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Transaction"
+                "$ref": "#/components/schemas/TransactionDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Transaction"
+                "$ref": "#/components/schemas/TransactionDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Transaction"
+                "$ref": "#/components/schemas/TransactionDto"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -885,23 +868,31 @@
         "additionalProperties": false
       },
       "CustomerDto": {
+        "required": [
+          "address",
+          "customerName",
+          "place",
+          "zip"
+        ],
         "type": "object",
         "properties": {
           "customerName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "address": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "zip": {
+            "maximum": 9999,
+            "minimum": 1000,
             "type": "integer",
             "format": "int32"
           },
           "place": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -930,12 +921,12 @@
           },
           "amount": {
             "pattern": "^\\d+.?\\d{0,2}$",
-            "type": "integer",
-            "format": "int32"
+            "type": "number",
+            "format": "double"
           },
           "date": {
             "type": "string",
-            "format": "date"
+            "format": "date-time"
           },
           "customerId": {
             "type": "integer",
@@ -946,6 +937,42 @@
           },
           "customer": {
             "$ref": "#/components/schemas/Customer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionDto": {
+        "required": [
+          "accountId",
+          "amount",
+          "customerId",
+          "date",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maximum": 9999,
+            "minimum": 1000,
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "amount": {
+            "pattern": "^\\d+.?\\d{0,2}$",
+            "type": "number",
+            "format": "double"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
