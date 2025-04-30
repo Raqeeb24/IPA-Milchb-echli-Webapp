@@ -8,15 +8,14 @@ import { DateField } from "@mui/x-date-pickers/DateField";
 import ApiRequest from "../api.requests";
 import { emptyTransaction, Transaction, TransactionDto } from "./interfaces/Transaction";
 import { SECRET_KEY } from "../config";
-import { DeleteIconButton, EditIconButton, LogoutIconButton } from "./IconButtons";
+import { DeleteIconButton, EditIconButton } from "./IconButtons";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { de } from "date-fns/locale";
 import { Account } from "./interfaces/Account";
-import { StyledTableCell } from "./StyledTable";
+import { StyledTableHeadCell } from "./StyledTableComponents";
 import { useNavigate } from "react-router-dom";
 import { ActionType } from "./ActionType";
-import { enqueueSnackbar } from "notistack";
 
 const HomeView: React.FC = () => {
     const navigate = useNavigate();
@@ -43,7 +42,6 @@ const HomeView: React.FC = () => {
     const getCookie = () => {
         const encryptedCustomer = Cookies.get("customer");
         if (!encryptedCustomer) {
-            navigate("/");
             return;
         }
         const decryptedCustomer = CryptoJS.AES.decrypt((encryptedCustomer), SECRET_KEY).toString(CryptoJS.enc.Utf8);
@@ -152,7 +150,7 @@ const HomeView: React.FC = () => {
     return (
         <>
             <Grid container spacing={3} flexGrow={1}>
-                <Grid size={12}/>
+                <Grid size={12} />
                 <Grid size={12}>
                     <Paper
                         component="form"
@@ -236,12 +234,12 @@ const HomeView: React.FC = () => {
                         <Table stickyHeader aria-label="sticky table">
                             <TableHead className="TableHead">
                                 <TableRow>
-                                    <StyledTableCell>Datum</StyledTableCell>
-                                    <StyledTableCell>Nr</StyledTableCell>
-                                    <StyledTableCell>Buchungskonto</StyledTableCell>
-                                    <StyledTableCell>Beschreibung</StyledTableCell>
-                                    <StyledTableCell sx={{ textAlign: "right" }}>Betrag</StyledTableCell>
-                                    <StyledTableCell sx={{ textAlign: "right" }}>Aktion</StyledTableCell>
+                                    <StyledTableHeadCell>Datum</StyledTableHeadCell>
+                                    <StyledTableHeadCell>Nr</StyledTableHeadCell>
+                                    <StyledTableHeadCell>Buchungskonto</StyledTableHeadCell>
+                                    <StyledTableHeadCell>Beschreibung</StyledTableHeadCell>
+                                    <StyledTableHeadCell sx={{ textAlign: "right" }}>Betrag</StyledTableHeadCell>
+                                    <StyledTableHeadCell sx={{ textAlign: "right" }}>Aktion</StyledTableHeadCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

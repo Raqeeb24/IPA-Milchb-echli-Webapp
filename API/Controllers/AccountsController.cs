@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Models;
+using API.Dtos;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace API.Controllers
 {
@@ -40,6 +42,29 @@ namespace API.Controllers
             }
 
             return account;
+        }
+
+        // GET: api/Accounts/5
+        [HttpGet("SumByAccount/{id}")]
+        public async Task<ActionResult<Account>> GetSumByAccount(int id)
+        {
+            var result = await _context.Accounts
+                .Select(a => new AccountReportDto
+                {
+                    AccountId = a.AccountId,
+                    AccountName = a.AccountName,
+                    CategoryId = a.CategoryId,
+                    TotalAmount = a.Transactions.Sum(t => t.Amount)
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
         // PUT: api/Accounts/5

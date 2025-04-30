@@ -1,18 +1,13 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled, Stack, Modal, TextField, Button, Dialog, DialogTitle, DialogContent, IconButton } from "@mui/material";
 import React from "react";
-import { PersonAddAlt1 } from "@mui/icons-material";
-import LoginIcon from '@mui/icons-material/Login';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Customer, emptyCustomer } from "./interfaces/Customer";
 import { useNavigate } from "react-router-dom";
 import ApiRequest from "../api.requests";
-import { enqueueSnackbar } from "notistack";
 import { SECRET_KEY } from "../config";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import { DeleteIconButton, EditIconButton, LoginIconButton, PersonAddIconButton } from "./IconButtons";
-import { StyledTableCell } from "./StyledTable";
+import { StyledTableHeadCell } from "./StyledTableComponents";
 import { ActionType } from "./ActionType";
 
 const LoginView: React.FC = () => {
@@ -172,10 +167,10 @@ const LoginView: React.FC = () => {
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead className="TableHead">
                                     <TableRow>
-                                        <StyledTableCell>Kundenname</StyledTableCell>
-                                        <StyledTableCell>Adresse</StyledTableCell>
-                                        <StyledTableCell>Ort</StyledTableCell>
-                                        <StyledTableCell sx={{ textAlign: "end" }}>Aktion</StyledTableCell>
+                                        <StyledTableHeadCell>Kundenname</StyledTableHeadCell>
+                                        <StyledTableHeadCell>Adresse</StyledTableHeadCell>
+                                        <StyledTableHeadCell>Ort</StyledTableHeadCell>
+                                        <StyledTableHeadCell sx={{ textAlign: "end" }}>Aktion</StyledTableHeadCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

@@ -6,6 +6,7 @@ import { emptyCustomer } from './components/interfaces/Customer'
 import HomeView from './components/HomeView'
 import { LoginLayout } from './LoginLayout'
 import { AppLayout } from './AppLayout'
+import ReportView from './components/ReportView'
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           </Route>
           <Route element={<AppLayout />}>
             <Route path="/HomeView" element={<HomeView />} />
-            <Route path="/ReportView" element={<div>ReportView</div>} />
+            <Route path="/ReportView" element={<ReportView />} />
           </Route>
         </Routes>
         <br />

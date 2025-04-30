@@ -31,7 +31,7 @@ const ApiRequest = {
             return response.status;
         } catch (error) {
             console.error("Error POST customer:", error);
-            enqueueSnackbar(`Kunde hinzufügen fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Kunde hinzufügen fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     editCustomer: async (customer: Customer) => {
@@ -41,7 +41,7 @@ const ApiRequest = {
             return response.status;
         } catch (error) {
             console.error("Error PUT customer:", error);
-            enqueueSnackbar(`Kunde editieren fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Kunde editieren fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     deleteCustomer: async (customerId: number) => {
@@ -49,7 +49,7 @@ const ApiRequest = {
             await instance.delete(`api/Customers/${customerId}`);
         } catch (error) {
             console.error("Error DELETE customer:", error);
-            enqueueSnackbar(`Kunde löschen fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Kunde löschen fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     getCustomerTransactions: async (customerId: number) => {
@@ -79,21 +79,20 @@ const ApiRequest = {
             return response.status;
         } catch (error) {
             console.error("Error POST transaction:", error);
-            enqueueSnackbar(`Buchung hinzufügen fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Buchung hinzufügen fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     editTransaction: async (transaction: TransactionDto) => {
         try {
-            if(transaction.transactionId)
-            {
+            if (transaction.transactionId) {
                 const response = await instance.put(`api/Transactions/${transaction.transactionId}`, transaction);
-            console.log("Response:", response.data);
-            return response.status;
+                console.log("Response:", response.data);
+                return response.status;
             }
             return 404;
         } catch (error) {
             console.error("Error PUT transaction:", error);
-            enqueueSnackbar(`Buchung editieren fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Buchung editieren fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     deleteTransaction: async (transactionId: number) => {
@@ -101,7 +100,7 @@ const ApiRequest = {
             await instance.delete(`api/Transactions/${transactionId}`);
         } catch (error) {
             console.error("Error DELETE transaction:", error);
-            enqueueSnackbar(`Buchung löschen fehlgeschlagen: ${error}`, {variant: "error"});
+            enqueueSnackbar(`Buchung löschen fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
     getAccounts: async () => {
@@ -111,6 +110,26 @@ const ApiRequest = {
             return response.data;
         } catch (error) {
             console.error("Error GET accounts:", error);
+            enqueueSnackbar("Failed to fetch data");
+        }
+    },
+    getAccountSummaryList: async (customerId: number) => {
+        try {
+            const response = await instance.get(`api/Accounts/SumByAccount/${customerId}`);
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET resultList:", error);
+            enqueueSnackbar("Failed to fetch data");
+        }
+    },
+    getCategories: async () => {
+        try {
+            const response = await instance.get("api/Categories");
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET categories:", error);
             enqueueSnackbar("Failed to fetch data");
         }
     },

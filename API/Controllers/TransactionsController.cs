@@ -46,6 +46,45 @@ namespace API.Controllers
             return transaction;
         }
 
+
+        // GET: api/Transactions/5
+        [HttpGet("CustomerReport/{id}")]
+        public async Task<ActionResult<Transaction>> GetSumByCategory(int id)
+        {
+            var result = await _context.Transactions
+                .GroupBy(t => new { t.Account })
+                .Select(
+                t =>
+                    new
+                    {
+                        AccountName = t.Key.Account.AccountName,
+                        TotalAmount = t.Sum(t => t.Amount)
+                    })
+                .ToListAsync();
+            /*var totalTransactionByCategory = await _context.Transactions
+                .Select(t => new
+                {
+                    CustomerId = t.CustomerId,
+                    AccountId = t.AccountId,
+                    AccountNamet.Account.AccountName,
+                    t.Account.CategoryId,
+                    
+                    
+                })
+                .Where(t => t.CustomerId == id)
+                .Sum(t => t.Amount)
+                .AsNoTracking()
+                .ToListAsync();
+            */
+
+            if (result.Count > 0)
+            {
+                return Ok(result);
+            }
+
+            return Ok();
+        }
+
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
