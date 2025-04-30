@@ -22,11 +22,14 @@ namespace API.Controllers
             _context = context;
         }
 
-        // GET: api/Transactions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
+        // GET: api/Transactions/Customer/5
+        [HttpGet("Customer/{id}")]
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetCustomerTransactions(int id)
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions
+                .Where(t => t.CustomerId == id)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         // GET: api/Transactions/5
@@ -46,18 +49,24 @@ namespace API.Controllers
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransaction(int id, Transaction transaction)
+        public async Task<IActionResult> PutTransaction(int id, [FromBody] TransactionDto transactionDto)
         {
-            if (id != transaction.TransactionId)
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(transaction).State = EntityState.Modified;
+            transaction.AccountId = transactionDto.AccountId;
+            transaction.Description = transactionDto.Description;
+            transaction.Amount = transactionDto.Amount;
+            transaction.Date = transactionDto.Date;
+            transaction.CustomerId = transactionDto.CustomerId;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {

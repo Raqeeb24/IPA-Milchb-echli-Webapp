@@ -1,0 +1,1 @@
+export type ActionType = "SELECT" | "ADD" | "EDIT" | "DELETE" | "";

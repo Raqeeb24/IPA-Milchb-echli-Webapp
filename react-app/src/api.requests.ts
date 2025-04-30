@@ -52,13 +52,13 @@ const ApiRequest = {
             enqueueSnackbar(`Kunde löschen fehlgeschlagen: ${error}`, {variant: "error"});
         }
     },
-    getTransactions: async () => {
+    getCustomerTransactions: async (customerId: number) => {
         try {
-            const response = await instance.get("api/Transactions");
+            const response = await instance.get(`api/Transactions/Customer/${customerId}`);
             console.log("Response:", response.data);
             return response.data;
         } catch (error) {
-            console.error("Error GET transactions:", error);
+            console.error(`Error GET transactions from CustomerId: ${customerId}`, error);
             enqueueSnackbar("Failed to fetch data");
         }
     },
@@ -72,7 +72,7 @@ const ApiRequest = {
             enqueueSnackbar("Failed to fetch data");
         }
     },
-    postTransaction: async (transaction: TransactionDto = {accountId:0, amount:10.00, customerId:1, date:"2022-05-05", description:"dsf"}) => {
+    addTransaction: async (transaction: TransactionDto) => {
         try {
             const response = await instance.post("api/Transactions", transaction);
             console.log("Response:", response.data);
@@ -86,7 +86,7 @@ const ApiRequest = {
         try {
             if(transaction.transactionId)
             {
-                const response = await instance.put(`api/Customers/${transaction.customerId}`, transaction);
+                const response = await instance.put(`api/Transactions/${transaction.transactionId}`, transaction);
             console.log("Response:", response.data);
             return response.status;
             }

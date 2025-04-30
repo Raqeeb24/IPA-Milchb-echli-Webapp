@@ -13,10 +13,9 @@ import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import { DeleteIconButton, EditIconButton, LoginIconButton, PersonAddIconButton } from "./IconButtons";
 import { StyledTableCell } from "./StyledTable";
+import { ActionType } from "./ActionType";
 
 const LoginView: React.FC = () => {
-
-    type ActionType = "selectCustomer" | "addCustomer" | "editCustomer" | "deleteCustomer" | "";
 
     const [customerList, setCustomerList] = React.useState<Customer[]>([]);
     const [loading, setLoading] = React.useState(true);
@@ -43,16 +42,15 @@ const LoginView: React.FC = () => {
         console.log("log:", customer);
 
         let response;
-        if (actionType === "addCustomer") {
+        if (actionType === "ADD") {
             response = await ApiRequest.addCustomer(customer);
             console.log("response", response);
         }
-        if (actionType === "editCustomer") {
+        if (actionType === "EDIT") {
             response = await ApiRequest.editCustomer(customer);
             console.log("response", response);
         }
         if (response) {
-            enqueueSnackbar(response);
             setLoading(true);
             await fetchData();
             setLoading(false);
@@ -75,20 +73,20 @@ const LoginView: React.FC = () => {
 
 
         switch (action) {
-            case "selectCustomer":
+            case "SELECT":
                 const encryptedCustomer = CryptoJS.AES.encrypt(JSON.stringify(selectedCustomer), SECRET_KEY).toString();
                 Cookies.set("customer", encryptedCustomer, { expires: 0.2 });
                 setCustomer(emptyCustomer);
                 navigate("/HomeView");
-            case "addCustomer":
+            case "ADD":
                 setCustomer(emptyCustomer);
                 setOpen(true);
                 return;
-            case "editCustomer":
+            case "EDIT":
                 setCustomer(selectedCustomer);
                 setOpen(true);
                 return;
-            case "deleteCustomer":
+            case "DELETE":
                 console.log("delete customer:", selectedCustomer)
                 setLoading(true);
                 await ApiRequest.deleteCustomer(selectedCustomer.customerId);
@@ -105,7 +103,7 @@ const LoginView: React.FC = () => {
         <Box sx={{ display: "grid", gap: 5, marginTop: "5vh" }}>
             <Typography variant="h3" textAlign="center" gutterBottom>Milchbüechli Webapp</Typography>
             <Stack direction="row" justifyContent="end">
-                <PersonAddIconButton onClick={() => handleIconClick("addCustomer", emptyCustomer)} />
+                <PersonAddIconButton onClick={() => handleIconClick("ADD", emptyCustomer)} />
             </Stack>
             <Dialog
                 open={open}
@@ -113,8 +111,8 @@ const LoginView: React.FC = () => {
                 maxWidth="xs"
             >
                 <DialogTitle variant="h5" textAlign="center">
-                    {actionType === "addCustomer" && "Kunde hinzufügen"}
-                    {actionType === "editCustomer" && "Kunde bearbeiten"}
+                    {actionType === "ADD" && "Kunde hinzufügen"}
+                    {actionType === "EDIT" && "Kunde bearbeiten"}
                 </DialogTitle>
                 <DialogContent>
                     <Box
@@ -190,15 +188,15 @@ const LoginView: React.FC = () => {
                                                 <Stack direction="row" justifyContent="end">
                                                     <LoginIconButton
                                                         sx={{ gridRow: 1 }}
-                                                        onClick={() => handleIconClick("selectCustomer", c)}
+                                                        onClick={() => handleIconClick("SELECT", c)}
                                                     />
                                                     <EditIconButton
                                                         sx={{ gridRow: 1 }}
-                                                        onClick={() => handleIconClick("editCustomer", c)}
+                                                        onClick={() => handleIconClick("EDIT", c)}
                                                     />
                                                     <DeleteIconButton
                                                         sx={{ gridRow: 1 }}
-                                                        onClick={() => handleIconClick("deleteCustomer", c)}
+                                                        onClick={() => handleIconClick("DELETE", c)}
                                                     />
                                                 </Stack>
                                             </TableCell>

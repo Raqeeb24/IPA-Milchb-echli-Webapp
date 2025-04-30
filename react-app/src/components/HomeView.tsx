@@ -15,12 +15,44 @@ import { de } from "date-fns/locale";
 import { Account } from "./interfaces/Account";
 import { StyledTableCell } from "./StyledTable";
 import { useNavigate } from "react-router-dom";
+import { ActionType } from "./ActionType";
+import { enqueueSnackbar } from "notistack";
 
 const HomeView: React.FC = () => {
     const navigate = useNavigate();
 
+    const [customer, setCustomer] = React.useState<Customer>(emptyCustomer);
+    const [transaction, setTransaction] = React.useState<Transaction>(emptyTransaction);
+    const [transactionList, setTransactionList] = React.useState<Transaction[]>([]);
+    const [accountList, setAccountList] = React.useState<Account[]>([]);
+    const [actionType, setActionType] = React.useState<ActionType>("ADD");
+
+    const autocompleteProps = {
+        options: accountList,
+        getOptionLabel: (option: Account) => `${option.accountId} - ${option.accountName}`
+    };
+
+    React.useEffect(() => {
+        getCookie();
+    }, []);
+
+    React.useEffect(() => {
+        fetchData();
+    }, [customer]);
+
+    const getCookie = () => {
+        const encryptedCustomer = Cookies.get("customer");
+        if (!encryptedCustomer) {
+            navigate("/");
+            return;
+        }
+        const decryptedCustomer = CryptoJS.AES.decrypt((encryptedCustomer), SECRET_KEY).toString(CryptoJS.enc.Utf8);
+        const parsedDecryptedCustomer = JSON.parse(decryptedCustomer);
+        setCustomer(parsedDecryptedCustomer);
+    };
+
     const fetchData = async () => {
-        const transactions: Transaction[] = await ApiRequest.getTransactions();
+        const transactions: Transaction[] = await ApiRequest.getCustomerTransactions(customer.customerId);
         if (transactions) {
             setTransactionList(transactions);
             console.log("transactions", transaction);
@@ -31,31 +63,6 @@ const HomeView: React.FC = () => {
             console.log("accounts", accounts);
         }
     };
-    const getCookie = () => {
-        const encryptedCustomer = Cookies.get("customer");
-        if (!encryptedCustomer) {
-            navigate("/");
-            return;
-        }
-        const decryptedCustomer = CryptoJS.AES.decrypt((encryptedCustomer), SECRET_KEY).toString(CryptoJS.enc.Utf8);
-        const parsedDecryptedCustomer = JSON.parse(decryptedCustomer);
-        setCustomer(parsedDecryptedCustomer);
-    }
-
-    const [customer, setCustomer] = React.useState<Customer>(emptyCustomer);
-    const [transaction, setTransaction] = React.useState<Transaction>(emptyTransaction);
-    const [transactionList, setTransactionList] = React.useState<Transaction[]>([]);
-    const [accountList, setAccountList] = React.useState<Account[]>([]);
-
-    const autocompleteProps = {
-        options: accountList,
-        getOptionLabel: (option: Account) => `${option.accountId} - ${option.accountName}`
-    }
-
-    React.useEffect(() => {
-        getCookie();
-        fetchData();
-    }, []);
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log(transaction);
@@ -72,18 +79,19 @@ const HomeView: React.FC = () => {
             ...prevTransaction,
             date: e
         }));
-    }
+    };
 
     const onChangeAccountHandler = (e: React.StyleHTMLAttributes<Account>, account: Account | null) => {
         setTransaction((prevTransaction) => ({
             ...prevTransaction,
             accountId: account?.accountId ?? 0
         }));
-    }
+    };
 
     const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const transactionDto: TransactionDto = {
+            transactionId: transaction.transactionId,
             customerId: customer.customerId,
             date: transaction.date?.toISOString() ?? "",
             accountId: transaction.accountId,
@@ -93,52 +101,63 @@ const HomeView: React.FC = () => {
 
         console.log("Buchung:", transactionDto);
 
-        let response;
 
-        response = await ApiRequest.postTransaction(transactionDto);
         /*
         const result = zTransaction.safeParse(transaction);
 
         if(!result.success) {
             const fieldErrors: any = {};
         }
-
-        /*
+        */
         let response;
-        if (actionType === "addCustomer") {
-            response = await ApiRequest.addCustomer(customer);
+        if (actionType === "ADD") {
+            response = await ApiRequest.addTransaction(transactionDto);
             console.log("response", response);
         }
-        if (actionType === "editCustomer") {
-            response = await ApiRequest.editCustomer(customer);
+        if (actionType === "EDIT") {
+            response = await ApiRequest.editTransaction(transactionDto);
             console.log("response", response);
         }
         if (response) {
-            enqueueSnackbar(response);
-            setLoading(true);
             await fetchData();
-            setLoading(false);
-            setOpen(false);
         } else {
             console.log("no response: ", response)
         }
-            */
 
+    };
+
+    const handleIconClick = async (action: ActionType, selectedTransaction: Transaction) => {
+        setActionType(action);
+
+        switch (action) {
+            case "ADD":
+                setCustomer(emptyCustomer);
+                return;
+            case "EDIT":
+                console.log("t:", selectedTransaction);
+                setTransaction({
+                    ...selectedTransaction,
+                    date: selectedTransaction.date ? new Date(selectedTransaction.date) : null
+                });
+                return;
+            case "DELETE":
+                console.log("delete transaction:", selectedTransaction)
+                await ApiRequest.deleteTransaction(selectedTransaction.transactionId);
+                fetchData();
+                return;
+        }
+        console.log("log:", action)
     }
 
     return (
         <>
             <Grid container spacing={3} flexGrow={1}>
-                <Grid size={12}>
-                    <Typography variant="h6" textAlign="center">
-                        Eingeloggt als: {customer.customerName}
-                    </Typography>
-                    <LogoutIconButton />
-                </Grid>
+                <Grid size={12}/>
                 <Grid size={12}>
                     <Paper
                         component="form"
                         onSubmit={onSubmitHandler}
+                        elevation={3}
                         style={{ padding: 16 }}>
                         <Grid container spacing={3}>
                             <Grid size={{ xs: 12, md: 2 }}>
@@ -174,11 +193,11 @@ const HomeView: React.FC = () => {
                                     value={accountList.find(a => a.accountId === transaction.accountId) ?? null}
                                     onChange={onChangeAccountHandler}
                                     renderInput={(params) => (
-                                        <TextField 
-                                        {...params} 
-                                        label="Buchungskonto" 
-                                        fullWidth
-                                        required
+                                        <TextField
+                                            {...params}
+                                            label="Buchungskonto"
+                                            fullWidth
+                                            required
                                         />
                                     )}
                                 />
@@ -226,21 +245,32 @@ const HomeView: React.FC = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {transactionList.map((t: Transaction, i: number) => (
-                                    <TableRow key={i} onClick={() => console.log(t.accountId)}>
-                                        <TableCell>
-                                           {t.date ? new Date(t.date).toLocaleDateString("de-CH", { day: "2-digit", month: "2-digit", year: "numeric" }) : ""}
-                                        </TableCell>
-                                        <TableCell>{t.transactionId}</TableCell>
-                                        <TableCell>{t.accountId}</TableCell>
-                                        <TableCell>{t.description}</TableCell>
-                                        <TableCell sx={{ textAlign: "right" }}>{t.amount}</TableCell>
-                                        <TableCell sx={{ textAlign: "right" }}>
-                                            <EditIconButton />
-                                            <DeleteIconButton />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {
+                                    Array.isArray(transactionList) && transactionList.length > 0 ? (
+                                        transactionList.map((t: Transaction, i: number) => (
+                                            <TableRow key={i} onClick={() => console.log(t.accountId)}>
+                                                <TableCell>
+                                                    {t.date ? new Date(t.date).toLocaleDateString("de-CH", { day: "2-digit", month: "2-digit", year: "numeric" }) : ""}
+                                                </TableCell>
+                                                <TableCell>{t.transactionId}</TableCell>
+                                                <TableCell>{t.accountId}</TableCell>
+                                                <TableCell>{t.description}</TableCell>
+                                                <TableCell sx={{ textAlign: "right" }}>{t.amount}</TableCell>
+                                                <TableCell sx={{ textAlign: "right" }}>
+                                                    <EditIconButton onClick={() => handleIconClick("EDIT", t)} />
+                                                    <DeleteIconButton onClick={() => handleIconClick("DELETE", t)} />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )
+                                        :
+                                        (
+                                            <TableRow>
+                                                <TableCell colSpan={6} align="center">
+                                                    Keine Buchungen vorhanden
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                             </TableBody>
                         </Table>
                     </TableContainer>
