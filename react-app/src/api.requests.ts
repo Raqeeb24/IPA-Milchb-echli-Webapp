@@ -72,6 +72,16 @@ const ApiRequest = {
             enqueueSnackbar("Failed to fetch data");
         }
     },
+    getTransactionCount: async () => {
+        try {
+            const response = await instance.get("api/Transactions/Count");
+            console.log("Response:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error GET transactions/count:", error);
+            enqueueSnackbar("Failed to fetch data");
+        }
+    },
     addTransaction: async (transaction: TransactionDto) => {
         try {
             const response = await instance.post("api/Transactions", transaction);

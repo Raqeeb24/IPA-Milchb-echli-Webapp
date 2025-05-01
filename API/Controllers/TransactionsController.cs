@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using API.Data;
+using API.Dtos;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Data;
-using API.Models;
-using API.Dtos;
 
 namespace API.Controllers
 {
@@ -44,6 +39,22 @@ namespace API.Controllers
             }
 
             return transaction;
+        }
+
+        // GET: api/Transactions/Count
+        [HttpGet("Count")]
+        public async Task<ActionResult<Transaction>> GetTransactionCount()
+        {
+            var transaction = await _context.Transactions
+                .OrderByDescending(t => t.TransactionId)
+                .FirstOrDefaultAsync();
+
+            if (transaction == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(transaction.TransactionId + 1);
         }
 
 

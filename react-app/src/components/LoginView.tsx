@@ -9,12 +9,14 @@ import CryptoJS from "crypto-js";
 import { DeleteIconButton, EditIconButton, LoginIconButton, PersonAddIconButton } from "./IconButtons";
 import { StyledTableHeadCell } from "./StyledTableComponents";
 import { ActionType } from "./ActionType";
+import { CustomerContext } from "./context/CustomerContext";
 
 const LoginView: React.FC = () => {
 
     const [customerList, setCustomerList] = React.useState<Customer[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [customer, setCustomer] = React.useState<Customer>(emptyCustomer);
+    const { setCustomer: setSelectedCustomer } = React.useContext(CustomerContext);
     const [open, setOpen] = React.useState(false);
     const [actionType, setActionType] = React.useState<ActionType>("");
 
@@ -71,16 +73,18 @@ const LoginView: React.FC = () => {
             case "SELECT":
                 const encryptedCustomer = CryptoJS.AES.encrypt(JSON.stringify(selectedCustomer), SECRET_KEY).toString();
                 Cookies.set("customer", encryptedCustomer, { expires: 0.2 });
+                setSelectedCustomer(selectedCustomer);
                 setCustomer(emptyCustomer);
                 navigate("/HomeView");
+                break;
             case "ADD":
                 setCustomer(emptyCustomer);
                 setOpen(true);
-                return;
+                break;
             case "EDIT":
                 setCustomer(selectedCustomer);
                 setOpen(true);
-                return;
+                break;
             case "DELETE":
                 console.log("delete customer:", selectedCustomer)
                 setLoading(true);
@@ -89,9 +93,8 @@ const LoginView: React.FC = () => {
                 fetchData();
                 setLoading(false)
                 setCustomer(emptyCustomer);
-                return;
+                break;
         }
-        console.log("log:", action)
     }
 
     return (

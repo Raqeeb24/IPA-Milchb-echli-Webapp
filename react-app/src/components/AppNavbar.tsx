@@ -1,34 +1,25 @@
-import { AppBar, Toolbar, Typography, Box, Container, Stack, Button, Grid } from "@mui/material";
-import React, { useEffect } from "react";
+import { AppBar, Toolbar, Typography, Box, Container, Grid } from "@mui/material";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Customer } from "./interfaces/Customer";
 import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
-import { SECRET_KEY } from "../config";
 import { LogoutIconButton } from "./IconButtons";
+import { CustomerContext } from "./context/CustomerContext";
+import { emptyCustomer } from "./interfaces/Customer";
 
 const AppNavbar = () => {
     const navigate = useNavigate();
-
-    const [customer, setCustomer] = React.useState<Customer>();
+    const { customer, setCustomer } = React.useContext(CustomerContext);
 
     React.useEffect(() => {
-        getCookie();
+        const customerCookie = Cookies.get("customer");
+        if (!customerCookie && customer === emptyCustomer) {
+            navigate("/");
+        }
     }, []);
 
-    const getCookie = () => {
-        const encryptedCustomer = Cookies.get("customer");
-        if (!encryptedCustomer) {
-            navigate("/");
-            return;
-        }
-        const decryptedCustomer = CryptoJS.AES.decrypt((encryptedCustomer), SECRET_KEY).toString(CryptoJS.enc.Utf8);
-        const parsedDecryptedCustomer = JSON.parse(decryptedCustomer);
-        setCustomer(parsedDecryptedCustomer);
-    };
-
     const handleLogout = () => {
-        Cookies.remove("customer")
+        Cookies.remove("customer");
+        setCustomer(emptyCustomer);
         navigate("/");
     };
 

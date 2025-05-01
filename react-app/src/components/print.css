@@ -1,0 +1,25 @@
+@media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .print, .print * {
+      visibility: visible !important;
+    }
+  
+    .print {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      color: black;
+      padding:0;
+    }
+  
+    /* Optional: Verhindert Seitenumbruch mitten in Tabellen */
+    table {
+      page-break-inside: avoid;
+    }
+  }
+  

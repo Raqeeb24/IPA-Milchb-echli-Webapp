@@ -1,26 +1,20 @@
 import React from "react";
-import { Customer, emptyCustomer } from "./interfaces/Customer";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
 import { Grid } from "@mui/system";
-import { Autocomplete, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import ApiRequest from "../api.requests";
 import { emptyTransaction, Transaction, TransactionDto } from "./interfaces/Transaction";
-import { SECRET_KEY } from "../config";
 import { DeleteIconButton, EditIconButton } from "./IconButtons";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { de } from "date-fns/locale";
 import { Account } from "./interfaces/Account";
 import { StyledTableHeadCell } from "./StyledTableComponents";
-import { useNavigate } from "react-router-dom";
 import { ActionType } from "./ActionType";
+import { CustomerContext } from "./context/CustomerContext";
 
 const HomeView: React.FC = () => {
-    const navigate = useNavigate();
-
-    const [customer, setCustomer] = React.useState<Customer>(emptyCustomer);
+    const { customer } = React.useContext(CustomerContext);
     const [transaction, setTransaction] = React.useState<Transaction>(emptyTransaction);
     const [transactionList, setTransactionList] = React.useState<Transaction[]>([]);
     const [accountList, setAccountList] = React.useState<Account[]>([]);
@@ -32,22 +26,9 @@ const HomeView: React.FC = () => {
     };
 
     React.useEffect(() => {
-        getCookie();
-    }, []);
-
-    React.useEffect(() => {
         fetchData();
     }, [customer]);
 
-    const getCookie = () => {
-        const encryptedCustomer = Cookies.get("customer");
-        if (!encryptedCustomer) {
-            return;
-        }
-        const decryptedCustomer = CryptoJS.AES.decrypt((encryptedCustomer), SECRET_KEY).toString(CryptoJS.enc.Utf8);
-        const parsedDecryptedCustomer = JSON.parse(decryptedCustomer);
-        setCustomer(parsedDecryptedCustomer);
-    };
 
     const fetchData = async () => {
         const transactions: Transaction[] = await ApiRequest.getCustomerTransactions(customer.customerId);
@@ -59,6 +40,13 @@ const HomeView: React.FC = () => {
         if (accounts) {
             setAccountList(accounts);
             console.log("accounts", accounts);
+        }
+        const transactionId: number = await ApiRequest.getTransactionCount();
+        if (transactionId) {
+            setTransaction((prevTransaction) => ({
+                ...prevTransaction,
+                transactionId: transactionId
+            }));
         }
     };
 
@@ -118,6 +106,7 @@ const HomeView: React.FC = () => {
         }
         if (response) {
             await fetchData();
+            setTransaction(emptyTransaction);
         } else {
             console.log("no response: ", response)
         }
@@ -128,9 +117,6 @@ const HomeView: React.FC = () => {
         setActionType(action);
 
         switch (action) {
-            case "ADD":
-                setCustomer(emptyCustomer);
-                return;
             case "EDIT":
                 console.log("t:", selectedTransaction);
                 setTransaction({
@@ -145,7 +131,7 @@ const HomeView: React.FC = () => {
                 return;
         }
         console.log("log:", action)
-    }
+    };
 
     return (
         <>
@@ -157,8 +143,8 @@ const HomeView: React.FC = () => {
                         onSubmit={onSubmitHandler}
                         elevation={3}
                         style={{ padding: 16 }}>
-                        <Grid container spacing={3}>
-                            <Grid size={{ xs: 12, md: 2 }}>
+                        <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid size={{ xs: 7, sm: 4, md: 3, lg: 2 }}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={de}>
                                     <DateField
                                         label="Datum"
@@ -170,7 +156,7 @@ const HomeView: React.FC = () => {
                                     />
                                 </LocalizationProvider>
                             </Grid>
-                            <Grid size={{ xs: 12, md: 2 }}>
+                            <Grid size={{ xs: 5, sm: 4, md: 3, lg: 2 }}>
                                 <TextField
                                     label="Belegnummer"
                                     name="transactionId"
@@ -183,8 +169,8 @@ const HomeView: React.FC = () => {
                             </Grid>
                         </Grid>
 
-                        <Grid container spacing={3} marginTop={2}>
-                            <Grid size={{ xs: 12, md: 3.5, lg: 4 }}>
+                        <Grid container spacing={{xs: 1, sm: 2, md: 3}} marginTop={{xs: 1, sm: 2, md: 3}}>
+                             <Grid size={{ xs: 12, sm:6, md: 3.5 }}>
                                 <Autocomplete
                                     {...autocompleteProps}
                                     autoHighlight
@@ -200,7 +186,7 @@ const HomeView: React.FC = () => {
                                     )}
                                 />
                             </Grid>
-                            <Grid size={{ xs: 12, md: 4.5 }}>
+                            <Grid size={{ xs: 12, sm:6, md: 4.5 }}>
                                 <TextField
                                     label="Beschreibung"
                                     name="description"
@@ -210,7 +196,7 @@ const HomeView: React.FC = () => {
                                     required
                                 />
                             </Grid>
-                            <Grid size={{ xs: 12, md: 2 }}>
+                            <Grid size={{ xs: 8.5, sm: 9, md: 2 }}>
                                 <TextField
                                     label="Betrag"
                                     name="amount"
@@ -221,7 +207,7 @@ const HomeView: React.FC = () => {
                                     required
                                 />
                             </Grid>
-                            <Grid size={{ xs: 6, md: 2 }}>
+                            <Grid size={{ xs: 3.5, sm: 3, md: 2 }}>
                                 <Button type="submit" fullWidth>
                                     Buchen
                                 </Button>
