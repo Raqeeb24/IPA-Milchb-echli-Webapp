@@ -1,19 +1,13 @@
 import axios from "axios";
 import { Customer } from "./components/interfaces/Customer";
 import { enqueueSnackbar } from "notistack";
-import { Transaction, TransactionDto } from "./components/interfaces/Transaction";
+import { TransactionDto } from "./components/interfaces/Transaction";
 
 const instance = axios.create({
     baseURL: "https://localhost:7160/"
 });
 
 const ApiRequest = {
-    getTestingData: async () => {
-        await instance.get("WeatherForeCast")
-            .then((response) => {
-                console.log("Response:", response.data);
-            });
-    },
     getCustomers: async () => {
         try {
             const response = await instance.get("api/Customers");
@@ -21,7 +15,7 @@ const ApiRequest = {
             return response.data;
         } catch (error) {
             console.error("Error GET customers:", error);
-            enqueueSnackbar("Failed to fetch data");
+            enqueueSnackbar(`Kunden konnten nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
     addCustomer: async (customer: Customer) => {
@@ -52,34 +46,28 @@ const ApiRequest = {
             enqueueSnackbar(`Kunde löschen fehlgeschlagen: ${error}`, { variant: "error" });
         }
     },
-    getCustomerTransactions: async (customerId: number) => {
+    getCustomerTransactions: async (customerId: number, description?: string) => {
         try {
+            if (description) {
+                const response = await instance.get(`api/Transactions/Customer/${customerId}?search=${description}`);
+                return response.data;
+            }
             const response = await instance.get(`api/Transactions/Customer/${customerId}`);
             console.log("Response:", response.data);
             return response.data;
         } catch (error) {
             console.error(`Error GET transactions from CustomerId: ${customerId}`, error);
-            enqueueSnackbar("Failed to fetch data");
+            enqueueSnackbar(`Buchungen konnten nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
-    getTransactionId: async () => {
+    getTransactionNextId: async () => {
         try {
-            const response = await instance.get("api/Transactions/TransactionId");
+            const response = await instance.get("api/Transactions/NextId");
             console.log("Response:", response.data);
             return response.data;
         } catch (error) {
-            console.error("Error GET transactions:", error);
-            enqueueSnackbar("Failed to fetch data");
-        }
-    },
-    getTransactionCount: async () => {
-        try {
-            const response = await instance.get("api/Transactions/Count");
-            console.log("Response:", response.data);
-            return response.data;
-        } catch (error) {
-            console.error("Error GET transactions/count:", error);
-            enqueueSnackbar("Failed to fetch data");
+            console.error("Error GET transactions/nextId:", error);
+            enqueueSnackbar(`Belegnummer konnte nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
     addTransaction: async (transaction: TransactionDto) => {
@@ -120,17 +108,17 @@ const ApiRequest = {
             return response.data;
         } catch (error) {
             console.error("Error GET accounts:", error);
-            enqueueSnackbar("Failed to fetch data");
+            enqueueSnackbar(`Buchungskonten konnten nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
-    getAccountSummaryList: async (customerId: number) => {
+    getAccountSummaryList: async (customerId: number, dateFrom: string, dateTo: string) => {
         try {
-            const response = await instance.get(`api/Accounts/SumByAccount/${customerId}`);
+            const response = await instance.get(`api/Accounts/SumByAccount/${customerId}?dateFrom=${dateFrom}&dateTo=${dateTo}`);
             console.log("Response:", response.data);
             return response.data;
         } catch (error) {
             console.error("Error GET resultList:", error);
-            enqueueSnackbar("Failed to fetch data");
+            enqueueSnackbar(`Daten konnten nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
     getCategories: async () => {
@@ -140,7 +128,7 @@ const ApiRequest = {
             return response.data;
         } catch (error) {
             console.error("Error GET categories:", error);
-            enqueueSnackbar("Failed to fetch data");
+            enqueueSnackbar(`Daten konnten nicht geladen werden: ${error}`, { variant: "error" });
         }
     },
 }

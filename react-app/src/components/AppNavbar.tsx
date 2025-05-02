@@ -38,22 +38,20 @@ const AppNavbar = () => {
                     </Grid>
                 </Grid>
                 <Toolbar>
-                    <Typography
-                        variant="h6"
-                    >
+                    <Typography variant="h6">
                         Milchbüechli
                     </Typography>
                     <Box sx={{ display: 'flex', gap: { xs: 1, sm: 3, md: 4 }, ml: 'auto' }}>
                         <Typography
                             variant="body1"
-                            sx={{ color: 'white', cursor: 'pointer', ":hover": { color: "#42bff5" } }}
+                            sx={{ color: 'white', cursor: 'pointer', ":hover": { color: "#42bff5" }, fontSize: {xs: "0.8rem", sm: "1rem"} }}
                             onClick={() => navigate("/HomeView")}
                         >
                             Buchungen
                         </Typography>
                         <Typography
                             variant="body1"
-                            sx={{ color: 'white', cursor: 'pointer', ":hover": { color: "#42bff5" } }}
+                            sx={{ color: 'white', cursor: 'pointer', ":hover": { color: "#42bff5" }, fontSize: {xs: "0.8rem", sm: "1rem"} }}
                             onClick={() => navigate("/ReportView")}
                         >
                             Berichte

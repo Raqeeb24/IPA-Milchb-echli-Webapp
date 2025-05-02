@@ -1,4 +1,3 @@
-import ApiRequest from './api.requests'
 import LoginView from './components/LoginView'
 import { Route, Routes } from 'react-router-dom'
 import { CustomerProvider } from './components/context/CustomerContext'
@@ -21,8 +20,6 @@ function App() {
             <Route path="/ReportView" element={<ReportView />} />
           </Route>
         </Routes>
-        <br />
-        <button onClick={() => ApiRequest.getTestingData()}>Daten abrufen</button>
       </CustomerProvider>
     </>
   )

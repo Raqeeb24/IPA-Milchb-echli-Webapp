@@ -30,8 +30,8 @@ const HomeView: React.FC = () => {
     }, [customer]);
 
 
-    const fetchData = async () => {
-        const transactions: Transaction[] = await ApiRequest.getCustomerTransactions(customer.customerId);
+    const fetchData = async (searchString?: string) => {
+        const transactions: Transaction[] = await ApiRequest.getCustomerTransactions(customer.customerId, searchString);
         if (transactions) {
             setTransactionList(transactions);
             console.log("transactions", transaction);
@@ -41,7 +41,7 @@ const HomeView: React.FC = () => {
             setAccountList(accounts);
             console.log("accounts", accounts);
         }
-        const transactionId: number = await ApiRequest.getTransactionCount();
+        const transactionId: number = await ApiRequest.getTransactionNextId();
         if (transactionId) {
             setTransaction((prevTransaction) => ({
                 ...prevTransaction,
@@ -56,8 +56,6 @@ const HomeView: React.FC = () => {
             ...prevTransaction,
             [e.target.name]: e.target.value
         }));
-
-        console.log("log", transaction);
     };
 
     const onChangeDateHandler = (e: Date | null) => {
@@ -87,14 +85,6 @@ const HomeView: React.FC = () => {
 
         console.log("Buchung:", transactionDto);
 
-
-        /*
-        const result = zTransaction.safeParse(transaction);
-
-        if(!result.success) {
-            const fieldErrors: any = {};
-        }
-        */
         let response;
         if (actionType === "ADD") {
             response = await ApiRequest.addTransaction(transactionDto);
@@ -105,10 +95,10 @@ const HomeView: React.FC = () => {
             console.log("response", response);
         }
         if (response) {
-            await fetchData();
+            fetchData();
             setTransaction(emptyTransaction);
         } else {
-            console.log("no response: ", response)
+            console.log("no response: ", response);
         }
 
     };
@@ -118,20 +108,21 @@ const HomeView: React.FC = () => {
 
         switch (action) {
             case "EDIT":
-                console.log("t:", selectedTransaction);
                 setTransaction({
                     ...selectedTransaction,
                     date: selectedTransaction.date ? new Date(selectedTransaction.date) : null
                 });
                 return;
             case "DELETE":
-                console.log("delete transaction:", selectedTransaction)
                 await ApiRequest.deleteTransaction(selectedTransaction.transactionId);
                 fetchData();
                 return;
         }
-        console.log("log:", action)
     };
+
+    const onChangeSearch = (searchString: string) => {
+        fetchData(searchString);
+    }
 
     return (
         <>
@@ -169,8 +160,8 @@ const HomeView: React.FC = () => {
                             </Grid>
                         </Grid>
 
-                        <Grid container spacing={{xs: 1, sm: 2, md: 3}} marginTop={{xs: 1, sm: 2, md: 3}}>
-                             <Grid size={{ xs: 12, sm:6, md: 3.5 }}>
+                        <Grid container spacing={{ xs: 1, sm: 2, md: 3 }} marginTop={{ xs: 1, sm: 2, md: 3 }}>
+                            <Grid size={{ xs: 12, sm: 6, md: 3.5 }}>
                                 <Autocomplete
                                     {...autocompleteProps}
                                     autoHighlight
@@ -186,7 +177,7 @@ const HomeView: React.FC = () => {
                                     )}
                                 />
                             </Grid>
-                            <Grid size={{ xs: 12, sm:6, md: 4.5 }}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4.5 }}>
                                 <TextField
                                     label="Beschreibung"
                                     name="description"
@@ -214,6 +205,12 @@ const HomeView: React.FC = () => {
                             </Grid>
                         </Grid>
                     </Paper>
+                </Grid>
+                <Grid size={12} textAlign={"end"}>
+                    <TextField
+                        placeholder="Suchen..."
+                        onChange={(e) => onChangeSearch(e.target.value)}
+                    />
                 </Grid>
                 <Paper sx={{ width: "100%" }}>
                     <TableContainer>

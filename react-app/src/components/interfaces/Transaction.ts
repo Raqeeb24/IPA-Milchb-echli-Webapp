@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 export interface Transaction {
     transactionId: number,
     accountId: number,
@@ -8,14 +6,6 @@ export interface Transaction {
     date: Date | null,
     customerId: number
 }
-
-export const zTransaction = z.object({
-    transactionId: z.number(),
-    accountId: z.number(),
-    description: z.string().min(1, "Beschreibung ist erforderlich"),
-    amount: z.number(),
-    date: z.date(),
-})
 
 export interface TransactionDto {
     transactionId?: number,

@@ -44,15 +44,14 @@ namespace API.Controllers
             return account;
         }
 
-        // GET: api/Accounts/SujmByÂccount/5
+        // GET: api/Accounts/SumByAccount/5
         [HttpGet("SumByAccount/{id}")]
-        public async Task<ActionResult<Account>> GetSumByAccount(int id, [FromBody] DateTime? dateFrom = null , DateTime? dateTo = null)
+        public async Task<ActionResult<Account>> GetSumByAccount([FromRoute] int id, [FromQuery] DateTime? dateFrom = null, [FromQuery] DateTime? dateTo = null)
         {
             var from = dateFrom ?? new DateTime(2025, 1, 1);
-            var to = dateFrom ?? new DateTime(2025, 12, 31);
+            var to = dateTo ?? new DateTime(2025, 12, 31);
 
             var result = await _context.Accounts
-                //.Where(a => a.Transactions.Any(t => t.CustomerId == id))
                 .Select(a => new AccountReportDto
                 {
                     AccountId = a.AccountId,

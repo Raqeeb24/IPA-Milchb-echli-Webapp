@@ -4,6 +4,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import PrintIcon from '@mui/icons-material/Print';
 
 // Login-icon
 const StyledLoginButton = styled(IconButton)({
@@ -39,7 +40,7 @@ export const PersonAddIconButton = (props: IconButtonProps) => {
         <StyledPersonaAddButton {...props}>
             <PersonAddAlt1
                 titleAccess="Kunde hinzufügen"
-                fontSize="medium"
+                sx={{ fontSize: { xs: 30, sm: 40 } }}
             />
         </StyledPersonaAddButton>
     );
@@ -102,5 +103,25 @@ export const LogoutIconButton = (props: IconButtonProps) => {
                 fontSize="medium"
             />
         </StyledLogoutButton>
+    );
+}
+
+// Print-icon
+const StyledPrintIcon = styled(IconButton)({
+    color: "black",
+    "&:hover": {
+        backgroundColor: "transparent",
+        color: "#0f346b"
+    }
+});
+
+export const PrintIconButton = (props: IconButtonProps) => {
+    return (
+        <StyledPrintIcon {...props}>
+            <PrintIcon
+                titleAccess="PDF-Druck"
+                sx={{ fontSize: { xs: 25, sm: 30, md: 35 } }}
+            />
+        </StyledPrintIcon>
     );
 }

@@ -6,15 +6,16 @@ export const StyledTableHeadCell = styled(TableCell)({
 
     "@media print": {
         color: "black",
-        backgroundColor: "#f0f0f0"
+        backgroundColor: "#151B21"
     }
 });
 
 export const StyledCategoryTableCell = styled(TableCell)({
     color: "white",
     backgroundColor: "#49525B",
+
     '@media print': {
         color: "black",
-        backgroundColor: "#f0f0f0"
+        backgroundColor: "#49525B"
     }
 });

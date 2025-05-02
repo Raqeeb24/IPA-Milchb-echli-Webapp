@@ -3,6 +3,7 @@ using API.Dtos;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -17,14 +18,23 @@ namespace API.Controllers
             _context = context;
         }
 
-        // GET: api/Transactions/Customer/5
+        // GET: api/Transactions/Customer/5?search
         [HttpGet("Customer/{id}")]
-        public async Task<ActionResult<IEnumerable<Transaction>>> GetCustomerTransactions(int id)
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetCustomerTransactions([FromRoute] int id, [FromQuery] string ?search)
         {
-            return await _context.Transactions
+            var customerTransactions=  await _context.Transactions
                 .Where(t => t.CustomerId == id)
                 .AsNoTracking()
                 .ToListAsync();
+
+            if(!string.IsNullOrEmpty(search))
+            {
+                customerTransactions =  customerTransactions
+                    .Where(t => t.Description.ToLower().Contains(search.ToLower()))
+                    .ToList();
+            }
+
+            return customerTransactions;
         }
 
         // GET: api/Transactions/5
@@ -41,9 +51,9 @@ namespace API.Controllers
             return transaction;
         }
 
-        // GET: api/Transactions/Count
-        [HttpGet("Count")]
-        public async Task<ActionResult<Transaction>> GetTransactionCount()
+        // GET: api/Transactions/NextId
+        [HttpGet("NextId")]
+        public async Task<ActionResult<Transaction>> GetTransactionNextId()
         {
             var transaction = await _context.Transactions
                 .OrderByDescending(t => t.TransactionId)

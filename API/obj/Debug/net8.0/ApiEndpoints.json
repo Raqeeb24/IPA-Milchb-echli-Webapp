@@ -443,26 +443,6 @@
   },
   {
     "ContainingType": "API.Controllers.TransactionsController",
-    "Method": "GetTransactionCount",
-    "RelativePath": "api/Transactions/Count",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "API.Models.Transaction",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Controllers.TransactionsController",
     "Method": "GetCustomerTransactions",
     "RelativePath": "api/Transactions/Customer/{id}",
     "HttpMethod": "GET",
@@ -473,6 +453,11 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -514,16 +499,16 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
+    "ContainingType": "API.Controllers.TransactionsController",
+    "Method": "GetTransactionNextId",
+    "RelativePath": "api/Transactions/NextId",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.WeatherForecast, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Models.Transaction",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -531,7 +516,6 @@
         ],
         "StatusCode": 200
       }
-    ],
-    "EndpointName": "GetWeatherForecast"
+    ]
   }
 ]
